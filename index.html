@@ -981,7 +981,7 @@ function getScheduleInfo() {
       const closes =
         new Date(schedule.orderCloses);
 
-      return now >= opens && now <= closes;
+      return now >= opens && now < closes;
 
     });
 
@@ -1912,7 +1912,7 @@ function productCard(
         alt="${esc(product.name)}"
         onerror="
           this.onerror=null;
-          this.src='${DEFAULT_PLACEHOLDER}';
+          this.outerHTML='<span role="img" aria-label="Banh Mi" style="font-size:42px">🥖</span>';
         "
       >
 
@@ -2973,9 +2973,7 @@ function closedPage(next) {
             alt="${esc(menu.title)}"
             onerror="
               this.onerror=null;
-              this.src='${esc(
-                STORE_CONFIG.closedPageImage
-              )}';
+              this.outerHTML='<span role="img" aria-label="Banh Mi Wow" style="font-size:64px">🥖</span>';
             "
           >
 
@@ -3112,7 +3110,7 @@ function noUpcomingSalesPage() {
             )}"
             alt="Banh Mi Wow"
             onerror="
-              this.style.display='none';
+              this.outerHTML='<span role="img" aria-label="Banh Mi Wow" style="font-size:64px">🥖</span>';
             "
           >
 
