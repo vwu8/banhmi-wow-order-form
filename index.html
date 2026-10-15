@@ -787,6 +787,22 @@ const MENUS = {
         price: 8,
         note:
           "Braised pork, ham, pate, pickled vegetables"
+      },
+
+      {
+        id: "pudding-original",
+        name: "Original Pudding with Caramel",
+        price: 2,
+        note: "Caramel at the bottom. Minimum order: 2 bowls.",
+        standalone: true
+      },
+
+      {
+        id: "addon-chilli",
+        name: "Our Spicy Chilli Bottle (~250g)",
+        price: 8,
+        note: "Maximum 2 bottles per order.",
+        standalone: true
       }
 
     ],
@@ -803,13 +819,6 @@ const MENUS = {
         id: "addon-egg",
         name: "Egg",
         price: 1
-      },
-
-      {
-        id: "addon-chilli",
-        name: "Our Spicy Chilli Bottle (~250g)",
-        price: 8,
-        standalone: true
       }
 
     ]
@@ -3323,13 +3332,13 @@ function addSimple(product) {
 
     exclusions: [],
 
-    quantity: 1,
+    quantity: product.id === "pudding-original" ? 2 : 1,
 
     unitPrice:
       product.price,
 
     total:
-      product.price
+      product.price * (product.id === "pudding-original" ? 2 : 1)
 
   });
 
@@ -3544,11 +3553,11 @@ function updateQuantity(
         }
 
 
-        const quantity =
-          Math.max(
-            0,
-            line.quantity + delta
-          );
+        // Puddings are sold in a minimum of two bowls per order.
+        const nextQuantity = line.quantity + delta;
+        const quantity = line.productId === "pudding-original" && nextQuantity === 1
+          ? (delta < 0 ? 0 : 2)
+          : Math.max(0, nextQuantity);
 
 
         return {
@@ -3644,6 +3653,15 @@ function submitOrder() {
 
   }
 
+
+  const puddingQuantity = state.cart
+    .filter(line => line.productId === "pudding-original")
+    .reduce((sum, line) => sum + line.quantity, 0);
+
+  if (puddingQuantity === 1) {
+    alert("Original pudding has a minimum order of 2 bowls.");
+    return;
+  }
 
   if (
     !state.customer.name ||
